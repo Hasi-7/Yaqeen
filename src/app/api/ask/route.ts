@@ -1,16 +1,15 @@
 import { NextResponse } from "next/server";
+import { generateAnswer } from "@/lib/ai/generate-answer";
 import { dedupeCitations } from "@/lib/citations";
 import { loadRulings } from "@/lib/data";
-import { generateAnswerWithLocalAi } from "@/lib/local-ai";
 import { MARAJI, MARJA_ORDER } from "@/lib/maraji";
-import { retrieveForAllMaraji, retrieveRulings } from "@/lib/retriever";
+import { hybridSearchRulings } from "@/lib/retrieval/hybrid-search";
 import {
   DISCLAIMER,
   NOT_FOUND_MESSAGE,
   type AskMarjaId,
   type AskResponse,
   type MarjaId,
-  type ResponseDiagnostics,
 } from "@/lib/types";
 
 type AskRequest = {
@@ -18,6 +17,8 @@ type AskRequest = {
   marja?: unknown;
   marja_id?: unknown;
 };
+
+const MAX_QUESTION_LENGTH = 500;
 
 export async function POST(request: Request) {
   const body = (await request.json().catch(() => null)) as AskRequest | null;
@@ -30,6 +31,13 @@ export async function POST(request: Request) {
       {
         error: "Request must include a question and marja_id of sistani, khamenei, shirazi, or all.",
       },
+      { status: 400 },
+    );
+  }
+
+  if (question.length > MAX_QUESTION_LENGTH) {
+    return NextResponse.json(
+      { error: `Question must be ${MAX_QUESTION_LENGTH} characters or fewer.` },
       { status: 400 },
     );
   }
@@ -51,7 +59,7 @@ async function answerSingle(
   records: Awaited<ReturnType<typeof loadRulings>>["records"],
   datasetLoaded: boolean,
 ): Promise<AskResponse> {
-  const matches = retrieveRulings(records, question, marjaId);
+  const matches = await hybridSearchRulings(records, question, marjaId);
   const matchedRecords = matches.map((match) => match.record);
 
   if (matchedRecords.length === 0) {
@@ -61,6 +69,10 @@ async function answerSingle(
       answer: NOT_FOUND_MESSAGE,
       sources: [],
       disclaimer: DISCLAIMER,
+      answer_mode: "not_found",
+      ai_provider: "none",
+      ai_model: null,
+      fallback_reason: null,
       diagnostics: {
         datasetLoaded,
         recordCount: records.length,
@@ -69,7 +81,12 @@ async function answerSingle(
     };
   }
 
-  const generated = await generateAnswerWithLocalAi(question, matchedRecords);
+  const generated = await generateAnswer({
+    question,
+    marjaId,
+    marjaName: MARAJI[marjaId].name,
+    retrievedRecords: matches,
+  });
 
   return {
     status: "found",
@@ -77,10 +94,14 @@ async function answerSingle(
     answer: generated.answer,
     sources: dedupeCitations(matchedRecords),
     disclaimer: DISCLAIMER,
+    answer_mode: generated.answer_mode,
+    ai_provider: generated.ai_provider,
+    ai_model: generated.ai_model,
+    fallback_reason: generated.fallback_reason,
     diagnostics: {
       datasetLoaded,
       recordCount: records.length,
-      localAiMode: generated.mode,
+      localAiMode: generated.answer_mode,
     },
   };
 }
@@ -90,8 +111,12 @@ async function answerCompareAll(
   records: Awaited<ReturnType<typeof loadRulings>>["records"],
   datasetLoaded: boolean,
 ): Promise<AskResponse> {
-  let localAiMode: ResponseDiagnostics["localAiMode"] = "skipped_no_sources";
-  const retrievals = retrieveForAllMaraji(records, question);
+  const retrievals = await Promise.all(
+    MARJA_ORDER.map(async (marjaId) => ({
+      marjaId,
+      matches: await hybridSearchRulings(records, question, marjaId),
+    })),
+  );
 
   const results = await Promise.all(
     retrievals.map(async ({ marjaId, matches }) => {
@@ -104,23 +129,38 @@ async function answerCompareAll(
           status: "not_found" as const,
           answer: "Not Found in the current verified dataset.",
           sources: [],
+          answer_mode: "not_found" as const,
+          ai_provider: "none" as const,
+          ai_model: null,
+          fallback_reason: null,
         };
       }
 
-      const generated = await generateAnswerWithLocalAi(question, matchedRecords);
-      localAiMode = generated.mode;
-
+      const generated = await generateAnswer({
+        question,
+        marjaId,
+        marjaName: MARAJI[marjaId].name,
+        retrievedRecords: matches,
+      });
       return {
         marja_id: marjaId,
         marja_name: MARAJI[marjaId].name,
         status: "found" as const,
         answer: generated.answer,
         sources: dedupeCitations(matchedRecords),
+        answer_mode: generated.answer_mode,
+        ai_provider: generated.ai_provider,
+        ai_model: generated.ai_model,
+        fallback_reason: generated.fallback_reason,
       };
     }),
   );
 
   const foundCount = results.filter((result) => result.status === "found").length;
+  const foundResults = results.filter((result) => result.status === "found");
+  const responseAnswerMode = summarizeAnswerMode(foundResults.map((result) => result.answer_mode));
+  const responseProviders = new Set(foundResults.map((result) => result.ai_provider));
+  const responseModels = new Set(foundResults.map((result) => result.ai_model).filter(Boolean));
 
   return {
     status: foundCount > 0 ? "found" : "not_found",
@@ -131,12 +171,33 @@ async function answerCompareAll(
         ? "Review each marja's cited source separately. Differences should only be stated where the retrieved sources directly support them."
         : "Not enough verified sources were found to summarize a supported difference.",
     disclaimer: DISCLAIMER,
+    answer_mode: responseAnswerMode,
+    ai_provider: responseProviders.size === 1 ? foundResults[0]?.ai_provider ?? "none" : null,
+    ai_model: responseModels.size === 1 ? foundResults[0]?.ai_model ?? null : null,
     diagnostics: {
       datasetLoaded,
       recordCount: records.length,
-      localAiMode,
+      localAiMode: foundCount > 0 ? responseAnswerMode : "skipped_no_sources",
     },
   };
+}
+
+function summarizeAnswerMode(modes: Array<"ai" | "deterministic_fallback" | "not_found" | undefined>) {
+  const foundModes = modes.filter(Boolean);
+
+  if (foundModes.length === 0) {
+    return "not_found";
+  }
+
+  if (foundModes.includes("deterministic_fallback")) {
+    return "deterministic_fallback";
+  }
+
+  if (foundModes.includes("not_found")) {
+    return "not_found";
+  }
+
+  return "ai";
 }
 
 function isAskMarjaId(value: string): value is AskMarjaId {

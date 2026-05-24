@@ -15,12 +15,14 @@ https://github.com/Hasi-7/Yaqeen/pull/new/database
 This session implemented Team Member 1's MVP layer:
 
 - Curated ruling dataset in `data/rulings.json`.
-- Deterministic retrieval in `lib/retriever.ts`.
-- Backend-owned citation formatting in `lib/citations.ts`.
-- Deterministic short answer formatting in `lib/answer.ts`.
-- Supported marja metadata and validation in `lib/marja.ts`.
-- `POST /api/ask` route in `app/api/ask/route.ts`.
-- Smoke tests in `scripts/test-retrieval.ts`.
+- Deterministic retrieval in `src/lib/retriever.ts`.
+- Optional hybrid/vector retrieval in `src/lib/retrieval/`.
+- Backend-owned citation formatting in `src/lib/citations.ts`.
+- Source-constrained AI answer generation in `src/lib/ai/`.
+- Supported marja metadata in `src/lib/maraji.ts`.
+- Runtime dataset validation in `src/lib/ruling-schema.ts`.
+- `POST /api/ask` route in `src/app/api/ask/route.ts`.
+- Smoke/API/dataset tests in `scripts/`.
 
 The implementation intentionally avoids model-generated citations and unsupported religious reasoning. The dataset remains the source of truth.
 
@@ -49,7 +51,7 @@ The route also accepts `marja_id` for compatibility with backend naming.
 
 Use `"marja": "all"` for Compare All mode. Compare All runs retrieval separately for each marja instead of mixing all sources into one retrieval pass.
 
-Response fields include `mode`, `status` or `results`, `answer`, `sources`, `follow_up`, and `disclaimer`.
+Response fields include `mode`, `status` or `results`, `answer`, `sources`, `disclaimer`, and optional AI metadata fields such as `answer_mode`, `ai_provider`, and `ai_model`.
 
 Render source cards from the `sources` array. Do not parse citations out of the answer text.
 
@@ -59,7 +61,49 @@ Render source cards from the `sources` array. Do not parse citations out of the 
 - Compare All mode searches each marja independently.
 - Only records with `verification_status` of `verified_demo` or `verified` are retrievable.
 - If the question has no sufficiently relevant verified record, the API returns `Not Found in the current verified dataset`.
-- Retrieval is keyword/domain based for MVP reliability and demo speed.
+- Retrieval uses optional hybrid search: vector retrieval when embeddings are enabled and available, with keyword/domain retrieval as the safe fallback.
+
+Vector retrieval is an access layer only. The source of truth remains `data/rulings.json`, and vector results are joined back to verified dataset records by `record_id` before use.
+
+Embedding generation:
+
+```bash
+npm run build:embeddings
+```
+
+Embedding environment variables:
+
+```txt
+OPENAI_API_KEY=<key>
+YAQEEN_EMBEDDINGS_ENABLED=true
+YAQEEN_EMBEDDING_MODEL=text-embedding-3-small
+```
+
+If `data/ruling-embeddings.json` is missing, stale, disabled, or cannot embed the question, retrieval falls back to keyword search.
+
+## AI Answer Generation
+
+The API now performs retrieval before AI generation:
+
+```txt
+verified records -> retrieval -> source-constrained AI answer -> backend citations
+```
+
+Supported providers are configured with environment variables:
+
+```txt
+YAQEEN_AI_ENABLED=true
+YAQEEN_AI_PROVIDER=openai | ollama | mock | none
+YAQEEN_AI_MODEL=<model-name>
+OPENAI_API_KEY=<key>
+OLLAMA_BASE_URL=http://localhost:11434
+```
+
+If AI is disabled, missing, throws, returns empty text, returns a `Sources:` section, invents URL-like citations, or returns Not Found despite retrieved records, the API uses deterministic fallback text from the top retrieved record.
+
+Citations still come only from stored dataset metadata. The AI prompt explicitly tells the model not to create citations.
+
+Token streaming is not implemented yet.
 
 ## Dataset
 
@@ -80,6 +124,12 @@ Manual retrieval test:
 
 ```bash
 npm run test:retrieval
+```
+
+AI/provider/API tests:
+
+```bash
+npm run test:ai
 ```
 
 TypeScript check:

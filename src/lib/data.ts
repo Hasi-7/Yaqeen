@@ -1,5 +1,6 @@
 import { promises as fs } from "fs";
 import path from "path";
+import { validateRulingRecords } from "./ruling-schema";
 import type { RulingRecord } from "./types";
 
 type DatasetResult = {
@@ -25,7 +26,7 @@ export async function loadRulings(): Promise<DatasetResult> {
     }
 
     cachedDataset = {
-      records: parsed.filter(isRulingRecord),
+      records: validateRulingRecords(parsed),
       datasetLoaded: true,
     };
 
@@ -37,7 +38,7 @@ export async function loadRulings(): Promise<DatasetResult> {
       (error as NodeJS.ErrnoException).code === "ENOENT";
 
     if (!missingFile) {
-      console.error("Unable to load data/rulings.json", error);
+      throw error;
     }
 
     cachedDataset = {
@@ -47,25 +48,4 @@ export async function loadRulings(): Promise<DatasetResult> {
 
     return cachedDataset;
   }
-}
-
-function isRulingRecord(value: unknown): value is RulingRecord {
-  if (!value || typeof value !== "object") {
-    return false;
-  }
-
-  const record = value as Partial<RulingRecord>;
-
-  return Boolean(
-    record.id &&
-      record.marja_id &&
-      record.marja_name &&
-      record.source_type &&
-      record.source_title &&
-      record.topic &&
-      record.ruling_text &&
-      record.citation_label &&
-      record.verification_status &&
-      record.confidence_level,
-  );
 }

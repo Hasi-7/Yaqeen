@@ -54,19 +54,17 @@ Key files:
 - `AGENTS.md` — project operating notes for coding agents
 - `context/current-task.md` — current active task; read this before acting
 - `data/rulings.json` — canonical MVP dataset of verified ruling records
-- `lib/retriever.ts` — retrieval logic for filtering by marja and finding relevant rulings
-- `lib/prompt.ts` — strict source-only system prompt and answer formatting instructions
-- `lib/citations.ts` — citation formatting from database metadata; do not let the model invent citations
-- `app/api/ask/route.ts` — main API endpoint for user questions
-- `app/page.tsx` — main chat UI and marja selector
-- `components/MarjaSelector.tsx` — selector for Sistani, Khamenei, Shirazi, and Compare All
-- `components/ChatBox.tsx` — question input and streamed response display
-- `components/SourceCards.tsx` — source/citation display
-- `components/ComparisonTable.tsx` — per-marja comparison output
+- `src/lib/retriever.ts` — deterministic keyword retrieval logic
+- `src/lib/retrieval/hybrid-search.ts` — optional vector retrieval with keyword fallback
+- `src/lib/ai/prompt.ts` — strict source-only system prompt
+- `src/lib/citations.ts` — citation formatting from database metadata; do not let the model invent citations
+- `src/lib/ruling-schema.ts` — runtime dataset validation
+- `src/app/api/ask/route.ts` — main API endpoint for user questions
+- `src/components/YaqeenApp.tsx` — main UI, marja selector, source cards, and comparison output
 
 Important patterns:
 - The structured rulings dataset is the source of truth.
-- Vector search or semantic retrieval is only an access layer, not the source of truth.
+- Vector search or semantic retrieval is only an access layer, not the source of truth. Keyword fallback must remain available.
 - Always filter by `marja_id` before retrieval in single-marja mode.
 - In "Compare All" mode, run retrieval separately for each marja. Do not retrieve all sources together and ask the model to compare.
 - If no sufficiently relevant verified source is found, return `Not Found in the current verified dataset`.

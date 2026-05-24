@@ -45,13 +45,11 @@ const MARJA_OPTIONS: Array<{ id: AskMarjaId; label: string; helper: string }> = 
 
 const SUGGESTED_QUESTIONS = [
   "What breaks wudhu?",
-  "When does Fajr time begin?",
-  "What is the ruling on fasting while traveling?",
-  "Is khums required on savings?",
-  "What should I do if I am unsure about qiblah?",
-  "Does accidentally eating break the fast?",
-  "What is the ruling on Friday prayer?",
-  "How should I choose a marja?",
+  "When does Fajr prayer begin?",
+  "Can I fast while traveling?",
+  "Is Friday prayer wajib?",
+  "Can I pray in a place where forbidden music is played?",
+  "What are examples of inherently najis things?",
 ];
 
 export function YaqeenApp() {
@@ -282,8 +280,11 @@ function SingleResponse({ response }: { response: SingleAskResponse }) {
   return (
     <article className="space-y-4">
       <div className={`rounded-md border p-4 ${found ? "border-[#b9d8ce] bg-[#f3fbf8]" : "border-[#e8d5ad] bg-[#fff8e8]"}`}>
-        <div className="mb-2 text-sm font-semibold uppercase tracking-normal text-[#536159]">
-          {found ? "Answer" : "Not Found"}
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <div className="text-sm font-semibold uppercase tracking-normal text-[#536159]">
+            {found ? "Answer" : "Not Found"}
+          </div>
+          <AnswerModeBadge mode={response.answer_mode} provider={response.ai_provider} model={response.ai_model} />
         </div>
         <p className="text-base leading-7 text-[#1b2923]">{response.answer}</p>
       </div>
@@ -310,7 +311,8 @@ function CompareResponse({ response }: { response: CompareAskResponse }) {
             className="grid min-w-[720px] grid-cols-[170px_1fr_220px] border-t border-[#e4e0d6] text-sm"
           >
             <div className="border-r border-[#e4e0d6] px-3 py-3 font-semibold text-[#17201b]">
-              {result.marja_name}
+              <span className="block">{result.marja_name}</span>
+              <AnswerModeBadge mode={result.answer_mode} provider={result.ai_provider} model={result.ai_model} compact />
             </div>
             <div className="border-r border-[#e4e0d6] px-3 py-3 leading-6 text-[#27342e]">
               {result.answer}
@@ -332,6 +334,50 @@ function CompareResponse({ response }: { response: CompareAskResponse }) {
       <FollowUpPath />
       <Disclaimer text={response.disclaimer} />
     </article>
+  );
+}
+
+type AnswerModeProp = "ai" | "deterministic_fallback" | "not_found" | undefined;
+type AiProviderProp = "openai" | "ollama" | "mock" | "none" | null | undefined;
+
+function AnswerModeBadge({
+  mode,
+  provider,
+  model,
+  compact = false,
+}: {
+  mode: AnswerModeProp;
+  provider: AiProviderProp;
+  model?: string | null;
+  compact?: boolean;
+}) {
+  if (!mode) return null;
+
+  const modeLabel =
+    mode === "ai" ? "AI answer" : mode === "deterministic_fallback" ? "Source fallback" : "Not Found";
+  const providerStr = provider && provider !== "none" ? provider : null;
+  const parts = [modeLabel, providerStr, model ?? null].filter(Boolean);
+  const text = `Generated with: ${parts.join(" · ")}`;
+
+  const colorClass =
+    mode === "ai"
+      ? "bg-[#e7f4ef] text-[#0f5f54] border-[#b9d8ce]"
+      : mode === "deterministic_fallback"
+        ? "bg-[#eef2ff] text-[#2d4088] border-[#c0ceef]"
+        : "bg-[#fff8e8] text-[#8b6a1a] border-[#e8d5ad]";
+
+  if (compact) {
+    return (
+      <span className={`mt-1 inline-block rounded border px-1.5 py-0.5 text-xs font-medium ${colorClass}`}>
+        {modeLabel}
+      </span>
+    );
+  }
+
+  return (
+    <span className={`shrink-0 rounded-full border px-2 py-0.5 text-xs font-medium ${colorClass}`}>
+      {text}
+    </span>
   );
 }
 
@@ -383,9 +429,9 @@ function formatAiMode(mode: ResponseDiagnostics["localAiMode"] | undefined) {
   }
 
   const labels = {
-    configured: "Local",
-    failed: "Fallback",
-    not_configured: "Fallback",
+    ai: "AI",
+    deterministic_fallback: "Fallback",
+    not_found: "Skipped",
     skipped_no_sources: "Skipped",
   };
 

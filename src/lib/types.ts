@@ -7,11 +7,21 @@ export const NOT_FOUND_MESSAGE =
 export const APPROVED_VERIFICATION_STATUSES = [
   "verified_demo",
   "verified",
-  "scholar_verified",
 ] as const;
+
+export const ALL_VERIFICATION_STATUSES = [
+  "verified_demo",
+  "verified",
+  "needs_review",
+  "deprecated",
+] as const;
+
+export const CONFIDENCE_LEVELS = ["high", "medium", "low"] as const;
 
 export type MarjaId = "sistani" | "khamenei" | "shirazi";
 export type AskMarjaId = MarjaId | "all";
+export type VerificationStatus = (typeof ALL_VERIFICATION_STATUSES)[number];
+export type ConfidenceLevel = (typeof CONFIDENCE_LEVELS)[number];
 
 export type RulingRecord = {
   id: string;
@@ -31,8 +41,8 @@ export type RulingRecord = {
   language?: string | null;
   tags?: string[];
   citation_label: string;
-  verification_status: string;
-  confidence_level: string;
+  verification_status: VerificationStatus;
+  confidence_level: ConfidenceLevel;
 };
 
 export type SourceCitation = {
@@ -51,6 +61,10 @@ export type SingleAskResponse = {
   answer: string;
   sources: SourceCitation[];
   disclaimer: string;
+  answer_mode?: "ai" | "deterministic_fallback" | "not_found";
+  ai_provider?: "openai" | "ollama" | "mock" | "none" | null;
+  ai_model?: string | null;
+  fallback_reason?: string | null;
   diagnostics?: ResponseDiagnostics;
 };
 
@@ -60,6 +74,10 @@ export type CompareResult = {
   status: "found" | "not_found";
   answer: string;
   sources: SourceCitation[];
+  answer_mode?: "ai" | "deterministic_fallback" | "not_found";
+  ai_provider?: "openai" | "ollama" | "mock" | "none" | null;
+  ai_model?: string | null;
+  fallback_reason?: string | null;
 };
 
 export type CompareAskResponse = {
@@ -68,6 +86,10 @@ export type CompareAskResponse = {
   results: CompareResult[];
   comparison_summary: string;
   disclaimer: string;
+  answer_mode?: "ai" | "deterministic_fallback" | "not_found";
+  ai_provider?: "openai" | "ollama" | "mock" | "none" | null;
+  ai_model?: string | null;
+  fallback_reason?: string | null;
   diagnostics?: ResponseDiagnostics;
 };
 
@@ -76,5 +98,5 @@ export type AskResponse = SingleAskResponse | CompareAskResponse;
 export type ResponseDiagnostics = {
   datasetLoaded: boolean;
   recordCount: number;
-  localAiMode: "configured" | "not_configured" | "skipped_no_sources" | "failed";
+  localAiMode: "ai" | "deterministic_fallback" | "not_found" | "skipped_no_sources";
 };
