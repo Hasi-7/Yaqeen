@@ -1,0 +1,209 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f7f6f1;
+  --foreground: #17201b;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+html {
+  text-rendering: geometricPrecision;
+}
+
+button,
+textarea {
+  font: inherit;
+}
+
+::selection {
+  background: #0f766e;
+  color: #ffffff;
+}
+
+.intro-geometric-pattern {
+  opacity: 0.26;
+  background:
+    linear-gradient(30deg, rgba(243, 216, 142, 0.18) 12%, transparent 12.5%, transparent 87%, rgba(243, 216, 142, 0.18) 87.5%, rgba(243, 216, 142, 0.18)),
+    linear-gradient(150deg, rgba(243, 216, 142, 0.18) 12%, transparent 12.5%, transparent 87%, rgba(243, 216, 142, 0.18) 87.5%, rgba(243, 216, 142, 0.18)),
+    linear-gradient(30deg, rgba(243, 216, 142, 0.18) 12%, transparent 12.5%, transparent 87%, rgba(243, 216, 142, 0.18) 87.5%, rgba(243, 216, 142, 0.18)),
+    linear-gradient(150deg, rgba(243, 216, 142, 0.18) 12%, transparent 12.5%, transparent 87%, rgba(243, 216, 142, 0.18) 87.5%, rgba(243, 216, 142, 0.18)),
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.09), transparent 34%);
+  background-position:
+    0 0,
+    0 0,
+    36px 63px,
+    36px 63px,
+    center;
+  background-size:
+    72px 126px,
+    72px 126px,
+    72px 126px,
+    72px 126px,
+    100% 100%;
+}
+
+.intro-book-stage {
+  position: relative;
+  width: min(78vw, 720px);
+  height: min(48vw, 430px);
+  min-height: 260px;
+  perspective: 1600px;
+}
+
+.intro-book-glow {
+  position: absolute;
+  inset: 8% 8% 0;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 50% 44%, rgba(255, 237, 172, 0.78), transparent 38%),
+    radial-gradient(circle at 50% 56%, rgba(15, 118, 110, 0.52), transparent 66%);
+  filter: blur(34px);
+}
+
+.intro-book {
+  position: absolute;
+  inset: 12% 4% 8%;
+  transform-style: preserve-3d;
+  filter: drop-shadow(0 42px 42px rgba(0, 0, 0, 0.34));
+}
+
+.intro-cover,
+.intro-pages,
+.intro-page-turn {
+  position: absolute;
+  top: 4%;
+  width: 50%;
+  height: 90%;
+  transform-style: preserve-3d;
+}
+
+.intro-cover {
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(243, 216, 142, 0.5);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(243, 216, 142, 0.16), transparent 27%),
+    linear-gradient(135deg, #06483f, #0c2f2a 58%, #0f5f54);
+  box-shadow:
+    inset 0 0 0 8px rgba(243, 216, 142, 0.12),
+    inset 0 0 0 16px rgba(255, 255, 255, 0.025),
+    0 18px 30px rgba(0, 0, 0, 0.28);
+}
+
+.intro-cover-left {
+  left: 0;
+  border-radius: 22px 5px 5px 22px;
+  transform-origin: right center;
+}
+
+.intro-cover-right {
+  right: 0;
+  border-radius: 5px 22px 22px 5px;
+  transform-origin: left center;
+}
+
+.intro-cover-decoration {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 54%;
+  aspect-ratio: 1;
+  border: 1px solid rgba(243, 216, 142, 0.42);
+  transform: rotate(45deg);
+}
+
+.intro-cover-decoration div {
+  width: 62%;
+  aspect-ratio: 1;
+  border: 1px solid rgba(243, 216, 142, 0.5);
+}
+
+.intro-cover-decoration span {
+  position: absolute;
+  width: 22%;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: rgba(243, 216, 142, 0.5);
+  box-shadow: 0 0 28px rgba(243, 216, 142, 0.38);
+}
+
+.intro-pages {
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(126, 98, 42, 0.2);
+  background:
+    linear-gradient(105deg, rgba(237, 219, 176, 0.94), rgba(255, 251, 236, 0.98) 48%, rgba(225, 204, 158, 0.92)),
+    repeating-linear-gradient(0deg, transparent, transparent 18px, rgba(80, 60, 29, 0.06) 19px);
+  box-shadow: inset 0 0 34px rgba(99, 73, 31, 0.12);
+}
+
+.intro-pages-left {
+  left: 1.5%;
+  border-radius: 18px 4px 4px 18px;
+  transform: rotateY(18deg);
+  transform-origin: right center;
+}
+
+.intro-pages-right {
+  right: 1.5%;
+  border-radius: 4px 18px 18px 4px;
+  transform: rotateY(-18deg);
+  transform-origin: left center;
+}
+
+.intro-pages span {
+  display: block;
+  width: 60%;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(15, 74, 66, 0.14);
+}
+
+.intro-page-turn {
+  right: 1.8%;
+  z-index: 3;
+  border-radius: 4px 18px 18px 4px;
+  transform-origin: left center;
+  background: linear-gradient(105deg, rgba(255, 252, 240, 0.99), rgba(230, 211, 167, 0.96));
+  box-shadow: -18px 22px 32px rgba(33, 24, 11, 0.16);
+}
+
+.intro-spine {
+  position: absolute;
+  left: calc(50% - 8px);
+  top: 5%;
+  z-index: 5;
+  width: 16px;
+  height: 88%;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #f3d88e, #a86f29 52%, #f3d88e);
+  box-shadow: 0 0 28px rgba(243, 216, 142, 0.42);
+}
+
+@media (max-width: 640px) {
+  .intro-book-stage {
+    width: 94vw;
+    height: 340px;
+    min-height: 340px;
+  }
+
+  .intro-book {
+    inset: 20% 2% 12%;
+  }
+}
