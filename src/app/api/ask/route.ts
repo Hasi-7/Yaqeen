@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { dedupeCitations } from "@/lib/citations";
 import { loadRulings } from "@/lib/data";
+import { getExactAnswer } from "@/lib/exact-answers";
 import { generateAnswerWithLocalAi } from "@/lib/local-ai";
 import { MARAJI, MARJA_ORDER } from "@/lib/maraji";
 import { retrieveForAllMaraji, retrieveRulings } from "@/lib/retriever";
@@ -51,6 +52,12 @@ async function answerSingle(
   records: Awaited<ReturnType<typeof loadRulings>>["records"],
   datasetLoaded: boolean,
 ): Promise<AskResponse> {
+  const exactAnswer = getExactAnswer(question, marjaId);
+
+  if (exactAnswer) {
+    return exactAnswer;
+  }
+
   const matches = retrieveRulings(records, question, marjaId);
   const matchedRecords = matches.map((match) => match.record);
 

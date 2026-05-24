@@ -36,10 +36,10 @@ export default function Home() {
               Source-grounded marja rulings
             </div>
             <h1 className="text-5xl font-semibold tracking-normal text-[#10221d] sm:text-6xl lg:text-7xl">
-              Yaqeen
+              Introducing Yaqeen
             </h1>
             <p className="mt-5 max-w-xl text-xl leading-8 text-[#405047]">
-              Ask a fiqh question, select your marja, and receive a short answer backed by verified source records.
+              A transparent, personalized AI experience for finding marja-specific Islamic rulings with verified sources and clear citations.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
@@ -61,27 +61,42 @@ export default function Home() {
       </section>
 
       <section className="border-b border-[#d9d6ca] bg-white">
-        <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:grid-cols-3 sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:grid-cols-2 sm:px-6 lg:px-8">
           <ProofPoint label="Maraji" value="3 + Compare All" />
-          <ProofPoint label="Answer rule" value="Source-only" />
-          <ProofPoint label="Fallback" value="Not Found" />
+          <ProofPoint label="Dataset" value="Verified records" />
         </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="max-w-3xl">
+        <div className="mx-auto max-w-3xl text-center">
           <h2 className="text-3xl font-semibold text-[#10221d] sm:text-4xl">
-            Built for confidence, not just convenience.
+            Trusted guidance, personalized to the marja a user follows.
           </h2>
           <p className="mt-4 text-base leading-7 text-[#536159]">
-            Yaqeen treats the rulings dataset as the source of truth. The AI layer helps read and summarize verified records, while citations and safety checks stay controlled by the backend.
+            Yaqeen transforms trusted Islamic scholarship into an accessible, transparent, and personalized AI experience for the modern Muslim community.
           </p>
         </div>
 
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
-          <Feature icon={Search} title="Marja-first retrieval" text="Single-marja questions filter by marja before retrieval, preventing accidental mixing of rulings." />
-          <Feature icon={Database} title="Verified records" text="Only approved dataset statuses are eligible for answers; draft or missing data returns Not Found." />
-          <Feature icon={Layers3} title="Compare All" text="Each marja is retrieved separately, then shown side by side so unsupported agreement claims do not slip in." />
+        <div className="mt-10 grid gap-5 md:grid-cols-3">
+          <Feature
+            icon={Search}
+            title="Personalized"
+            text="Users select the marja they follow so answers are tailored to the scholar whose rulings matter to them."
+          />
+          <Feature
+            icon={Database}
+            title="Verified"
+            text="Responses are grounded in approved source records with citation metadata, not unsupported model knowledge."
+          />
+          <Feature
+            icon={Layers3}
+            title="Transparent"
+            text="Users can review sources, compare available marja perspectives, and see Not Found when no verified record supports an answer."
+          />
+        </div>
+
+        <div className="mt-8 rounded-md bg-[#12332d] px-5 py-4 text-center text-base font-medium leading-7 text-white shadow-sm">
+          Key takeaway: Yaqeen makes trusted Islamic scholarship accessible, transparent, and personalized without sacrificing source integrity.
         </div>
       </section>
 
@@ -90,19 +105,19 @@ export default function Home() {
           <div>
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 px-3 py-1 text-sm text-[#cce8de]">
               <Sparkles size={16} aria-hidden="true" />
-              Demo-ready flow
+              Verification layer
             </div>
-            <h2 className="text-3xl font-semibold sm:text-4xl">A clear path for the hackathon demo.</h2>
+            <h2 className="text-3xl font-semibold sm:text-4xl">Responsible AI for source-backed religious guidance.</h2>
             <p className="mt-4 text-base leading-7 text-[#dbe9e5]">
-              The current app is designed to work before the final dataset arrives. Once `data/rulings.json` is merged, the same interface starts showing cited answers.
+              Yaqeen separates retrieval, answer generation, and citation display so the user can see when an answer is grounded and when the current dataset cannot support one.
             </p>
           </div>
           <div className="grid gap-3">
             {[
-              "Select Sistani, Khamenei, Sadiq Shirazi, or Compare All.",
-              "Ask one of the prepared demo questions.",
-              "Show citations when verified records exist.",
-              "Show Not Found when the dataset cannot support an answer.",
+              "Questions are scoped to the selected marja before retrieval begins.",
+              "Only reviewed and approved records are eligible for answers.",
+              "Transparent citations help users trace each answer back to its source record.",
+              "When the dataset does not contain a direct source, Yaqeen says Not Found and points users to official channels.",
             ].map((item) => (
               <div key={item} className="flex items-start gap-3 rounded-md border border-white/15 bg-white/8 px-4 py-3">
                 <CheckCircle2 className="mt-0.5 shrink-0 text-[#8ee0cf]" size={18} aria-hidden="true" />
@@ -118,7 +133,7 @@ export default function Home() {
           <div>
             <h2 className="text-2xl font-semibold text-[#10221d]">Try the working assistant interface.</h2>
             <p className="mt-2 text-sm leading-6 text-[#536159]">
-              It is already wired to the API and local-AI adapter, with safe empty-dataset behavior.
+              Ask a suggested question, compare maraji, or test the Not Found path to see the retrieval safeguards in action.
             </p>
           </div>
           <Link

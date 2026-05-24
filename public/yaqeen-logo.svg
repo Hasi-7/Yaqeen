@@ -1,0 +1,21 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Yaqeen emblem</title>
+  <desc id="desc">A green and gold symbolic emblem with an open book, dome-inspired geometry, and a pen-nib shape.</desc>
+  <rect width="512" height="512" rx="96" fill="#F3F8F5"/>
+  <circle cx="256" cy="255" r="188" stroke="#0B5A40" stroke-width="12"/>
+  <path d="M111 337C134 259 187 193 256 123C325 193 378 259 401 337C337 319 296 327 256 366C216 327 175 319 111 337Z" fill="#0B5A40"/>
+  <path d="M145 321C163 256 205 207 256 154C307 207 349 256 367 321C315 306 283 319 256 350C229 319 197 306 145 321Z" fill="#124D35"/>
+  <path d="M164 299C184 244 217 207 256 168C295 207 328 244 348 299" stroke="#2F7A57" stroke-width="10" stroke-linecap="round"/>
+  <path d="M256 182C235 209 220 236 210 267C235 257 277 257 302 267C292 236 277 209 256 182Z" fill="#0C3E2E"/>
+  <path d="M256 188C233 226 224 263 224 315C224 339 238 355 256 365C274 355 288 339 288 315C288 263 279 226 256 188Z" fill="#F8F2DD" stroke="#D5B56D" stroke-width="8"/>
+  <path d="M256 233V318" stroke="#0B4A35" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="256" cy="229" r="17" fill="#0B4A35"/>
+  <path d="M255 367C217 326 162 324 102 345C150 360 202 383 255 427V367Z" fill="#F8F2DD" stroke="#0B4A35" stroke-width="10" stroke-linejoin="round"/>
+  <path d="M257 367C295 326 350 324 410 345C362 360 310 383 257 427V367Z" fill="#F8F2DD" stroke="#0B4A35" stroke-width="10" stroke-linejoin="round"/>
+  <path d="M130 346C172 345 211 359 246 389" stroke="#D5B56D" stroke-width="5" stroke-linecap="round"/>
+  <path d="M382 346C340 345 301 359 266 389" stroke="#D5B56D" stroke-width="5" stroke-linecap="round"/>
+  <path d="M145 160C169 127 207 100 256 83C305 100 343 127 367 160" stroke="#C5A260" stroke-width="6" stroke-linecap="round"/>
+  <path d="M122 185C154 127 204 88 256 68C308 88 358 127 390 185" stroke="#D5B56D" stroke-width="5" stroke-linecap="round"/>
+  <path d="M256 31L269 56L294 69L269 82L256 107L243 82L218 69L243 56L256 31Z" fill="#F4E9BE" stroke="#CFAE64" stroke-width="6"/>
+  <path d="M207 192L221 178M228 215L244 199M284 199L300 215M291 178L305 192M198 241L217 226M314 226L333 241" stroke="#2E7856" stroke-width="5" stroke-linecap="round"/>
+</svg>

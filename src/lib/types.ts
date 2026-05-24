@@ -76,5 +76,10 @@ export type AskResponse = SingleAskResponse | CompareAskResponse;
 export type ResponseDiagnostics = {
   datasetLoaded: boolean;
   recordCount: number;
-  localAiMode: "configured" | "not_configured" | "skipped_no_sources" | "failed";
+  localAiMode:
+    | "configured"
+    | "not_configured"
+    | "skipped_no_sources"
+    | "failed"
+    | "exact_match";
 };
