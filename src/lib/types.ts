@@ -7,11 +7,13 @@ export const NOT_FOUND_MESSAGE =
 export const APPROVED_VERIFICATION_STATUSES = [
   "verified_demo",
   "verified",
+  "scholar_verified",
 ] as const;
 
 export const ALL_VERIFICATION_STATUSES = [
   "verified_demo",
   "verified",
+  "scholar_verified",
   "needs_review",
   "deprecated",
 ] as const;

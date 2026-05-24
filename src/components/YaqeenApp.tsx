@@ -119,13 +119,13 @@ export function YaqeenApp() {
           <div>
             <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#b9d8ce] bg-[#e7f4ef] px-3 py-1 text-sm font-medium text-[#0f5f54]">
               <ShieldCheck size={16} aria-hidden="true" />
-              Source-grounded MVP
+              Source-grounded assistant
             </div>
             <h1 className="text-4xl font-semibold tracking-normal text-[#10221d] sm:text-5xl">
               Yaqeen
             </h1>
             <p className="mt-2 max-w-2xl text-base leading-7 text-[#536159]">
-              Source-backed rulings from your marja.
+              Ask a focused ruling question and review the answer alongside its source metadata.
             </p>
           </div>
 
@@ -247,7 +247,7 @@ function EmptyState() {
         </div>
         <h2 className="text-xl font-semibold text-[#17201b]">Ready for verified sources</h2>
         <p className="mt-2 text-sm leading-6 text-[#5d6a63]">
-          The interface and API are wired. Until the curated dataset is merged, questions will safely return Not Found.
+          Select a marja, choose a suggested question, or ask your own. Yaqeen will answer only when the verified dataset supports it.
         </p>
       </div>
     </div>
@@ -286,7 +286,7 @@ function SingleResponse({ response }: { response: SingleAskResponse }) {
           </div>
           <AnswerModeBadge mode={response.answer_mode} provider={response.ai_provider} model={response.ai_model} />
         </div>
-        <p className="text-base leading-7 text-[#1b2923]">{response.answer}</p>
+        <p className="whitespace-pre-wrap text-base leading-7 text-[#1b2923]">{response.answer}</p>
       </div>
 
       <SourceCards sources={response.sources} />
@@ -315,7 +315,7 @@ function CompareResponse({ response }: { response: CompareAskResponse }) {
               <AnswerModeBadge mode={result.answer_mode} provider={result.ai_provider} model={result.ai_model} compact />
             </div>
             <div className="border-r border-[#e4e0d6] px-3 py-3 leading-6 text-[#27342e]">
-              {result.answer}
+              <span className="whitespace-pre-wrap">{result.answer}</span>
             </div>
             <div className="px-3 py-3 leading-6 text-[#536159]">
               {result.sources[0]?.citation_label ?? "Not Found"}

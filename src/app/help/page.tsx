@@ -18,7 +18,7 @@ const STEPS = [
   },
   {
     title: "Ask one focused question",
-    text: "Short practical questions work best for the MVP dataset and demo flow.",
+    text: "Specific practical questions are easier to match against a verified ruling record.",
   },
   {
     title: "Check the sources",
@@ -34,7 +34,7 @@ const FAQS = [
   {
     question: "Why does Yaqeen say Not Found?",
     answer:
-      "The current verified dataset may not contain a direct source for that question. This is intentional safety behavior, especially while the final dataset is still being added.",
+      "The verified dataset may not contain a direct source for that question. This is intentional safety behavior, not a failure of the interface.",
   },
   {
     question: "Can Yaqeen answer from general Islamic knowledge?",
@@ -67,7 +67,7 @@ export default function HelpPage() {
             </div>
             <h1 className="text-4xl font-semibold text-[#10221d] sm:text-5xl">Use Yaqeen safely and clearly.</h1>
             <p className="mt-4 text-base leading-7 text-[#536159]">
-              Yaqeen is built for source-backed retrieval. The safest answer is the one that can be traced to a verified record.
+              Yaqeen is built for source-backed retrieval. Use it to find cited rulings, compare available sources, and recognize when official follow-up is needed.
             </p>
           </div>
         </div>
@@ -79,10 +79,10 @@ export default function HelpPage() {
           <h2 className="text-2xl font-semibold">Safety rules</h2>
           <div className="mt-5 space-y-3">
             {[
-              "Do not treat Not Found as a bug.",
+              "Treat Not Found as a protected result, not a system error.",
               "Do not remove source citations from found answers.",
               "Do not blend rulings between maraji.",
-              "Do not use model knowledge when retrieval fails.",
+              "Do not answer from memory when retrieval fails.",
             ].map((rule) => (
               <div key={rule} className="flex items-start gap-3 text-sm leading-6 text-[#eef8f5]">
                 <CheckCircle2 className="mt-0.5 shrink-0 text-[#8ee0cf]" size={17} aria-hidden="true" />
@@ -119,7 +119,7 @@ export default function HelpPage() {
         <div className="mt-10 flex flex-col items-start justify-between gap-4 rounded-md border border-[#d9d6ca] bg-white p-5 shadow-sm sm:flex-row sm:items-center">
           <div>
             <h2 className="text-xl font-semibold text-[#10221d]">Ready to test the assistant?</h2>
-            <p className="mt-1 text-sm leading-6 text-[#536159]">Use the suggested questions first while the dataset is being finalized.</p>
+            <p className="mt-1 text-sm leading-6 text-[#536159]">Start with the suggested questions to see cited answers, comparisons, and safe refusal behavior.</p>
           </div>
           <Link
             href="/ask"

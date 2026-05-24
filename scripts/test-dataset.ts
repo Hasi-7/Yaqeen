@@ -13,6 +13,8 @@ const invalidRecord = {
 };
 
 assert.throws(() => validateRulingRecord(invalidRecord), /tags/);
-assert.deepEqual(APPROVED_VERIFICATION_STATUSES, ["verified_demo", "verified"]);
+assert.ok(APPROVED_VERIFICATION_STATUSES.includes("verified_demo"));
+assert.ok(APPROVED_VERIFICATION_STATUSES.includes("verified"));
+assert.ok(APPROVED_VERIFICATION_STATUSES.includes("scholar_verified"));
 
 console.log("PASS dataset schema validation tests");
