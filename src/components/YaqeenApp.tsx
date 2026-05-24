@@ -201,6 +201,7 @@ export function YaqeenApp() {
                   value={question}
                   onChange={(event) => setQuestion(event.target.value)}
                   placeholder="Example: What breaks wudhu?"
+                  dir="auto"
                   className="min-h-28 flex-1 resize-none rounded-md border border-[#d9d6ca] bg-[#fbfaf6] px-3 py-3 text-base leading-6 outline-none transition placeholder:text-[#8b938d] focus:border-[#0f766e] focus:ring-3 focus:ring-[#0f766e]/15"
                 />
                 <button
@@ -286,9 +287,10 @@ function SingleResponse({ response }: { response: SingleAskResponse }) {
           </div>
           <AnswerModeBadge mode={response.answer_mode} provider={response.ai_provider} model={response.ai_model} />
         </div>
-        <p className="whitespace-pre-wrap text-base leading-7 text-[#1b2923]">{response.answer}</p>
+        <p dir="auto" className="whitespace-pre-wrap text-base leading-7 text-[#1b2923]">{response.answer}</p>
       </div>
 
+      <LanguageMeta response={response} />
       <SourceCards sources={response.sources} />
       <FollowUpPath />
       <Disclaimer text={response.disclaimer} />
@@ -315,7 +317,7 @@ function CompareResponse({ response }: { response: CompareAskResponse }) {
               <AnswerModeBadge mode={result.answer_mode} provider={result.ai_provider} model={result.ai_model} compact />
             </div>
             <div className="border-r border-[#e4e0d6] px-3 py-3 leading-6 text-[#27342e]">
-              <span className="whitespace-pre-wrap">{result.answer}</span>
+              <span dir="auto" className="whitespace-pre-wrap">{result.answer}</span>
             </div>
             <div className="px-3 py-3 leading-6 text-[#536159]">
               {result.sources[0]?.citation_label ?? "Not Found"}
@@ -331,9 +333,32 @@ function CompareResponse({ response }: { response: CompareAskResponse }) {
         <p className="text-sm leading-6 text-[#27342e]">{response.comparison_summary}</p>
       </div>
 
+      <LanguageMeta response={response} />
       <FollowUpPath />
       <Disclaimer text={response.disclaimer} />
     </article>
+  );
+}
+
+function LanguageMeta({ response }: { response: SingleAskResponse | CompareAskResponse }) {
+  const lang = response.detected_language;
+  const query = response.retrieval_query;
+  const langName = response.answer_language;
+  if (!lang || lang === "en" || lang === "unknown") return null;
+
+  return (
+    <div className="flex flex-wrap gap-3 text-xs text-[#6b756f]">
+      {langName && (
+        <span>
+          Language: <span className="font-medium text-[#3a4c44]">{langName}</span>
+        </span>
+      )}
+      {query && (
+        <span>
+          Retrieval query: <span className="font-medium text-[#3a4c44]">{query}</span>
+        </span>
+      )}
+    </div>
   );
 }
 

@@ -18,11 +18,13 @@ Do not mention source titles, URLs, citation labels, ruling numbers, or page num
 
 type SourcePacketInput = {
   question: string;
+  retrievalQuery: string;
+  answerLanguage: string;
   marjaName: string;
   records: RulingRecord[];
 };
 
-export function buildSourcePacket({ question, marjaName, records }: SourcePacketInput): string {
+export function buildSourcePacket({ question, retrievalQuery, answerLanguage, marjaName, records }: SourcePacketInput): string {
   const sourceRecords = records
     .map((record, index) => `[${index + 1}]
 Record ID: ${record.id}
@@ -37,8 +39,16 @@ ${record.ruling_text}
 """`)
     .join("\n\n");
 
-  return `User question:
+  const isEnglish = answerLanguage === "English";
+
+  return `Original user question:
 "${question}"
+
+English retrieval query:
+"${retrievalQuery}"
+
+Answer language:
+${answerLanguage}
 
 Selected marja:
 ${marjaName}
@@ -47,9 +57,11 @@ Retrieved source records:
 ${sourceRecords}
 
 Task:
-Write a short answer using only the retrieved source records.
-Do not include citations in the answer text.
-Do not mention sources unless necessary.
-If the source does not answer the question, respond exactly:
-"Not Found in the current verified dataset."`;
+Write a short, practical answer in ${answerLanguage}.
+Use only the retrieved source records.
+Do not use outside knowledge.
+Do not invent citations.
+Do not include a separate source list; the backend will attach citations.
+Do not include citation labels, ruling numbers, page numbers, source titles, or URLs in the answer text.
+If the retrieved sources do not answer the question, say exactly: "${isEnglish ? "Not Found in the current verified dataset." : "Not Found in the current verified dataset."}"`;
 }

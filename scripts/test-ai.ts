@@ -4,7 +4,7 @@ import { POST } from "../src/app/api/ask/route";
 import { loadRulings } from "../src/lib/data";
 import { retrieveRulings } from "../src/lib/retriever";
 import { ollamaTimeoutMs } from "../src/lib/ai/provider";
-import type { AskResponse } from "../src/lib/types";
+import { NOT_FOUND_MESSAGE, type AskResponse } from "../src/lib/types";
 
 type EnvSnapshot = Record<string, string | undefined>;
 
@@ -134,7 +134,7 @@ async function testAiNotFoundIsPreserved(retrievedRecords: ReturnType<typeof ret
     retrievedRecords,
   });
 
-  assert.equal(generated.answer, "Not Found in the current verified dataset.");
+  assert.equal(generated.answer, NOT_FOUND_MESSAGE);
   assert.equal(generated.answer_mode, "not_found");
 }
 

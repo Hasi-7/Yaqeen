@@ -7,13 +7,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "npm run test:dataset && npm run test:retrieval && npm run test:api && npm run test:ai && npm run test:vector",
+    "test": "npm run test:dataset && npm run test:retrieval && npm run test:api && npm run test:ai && npm run test:vector && npm run test:multilingual",
     "test:dataset": "tsx scripts/test-dataset.ts",
     "test:retrieval": "tsx scripts/test-retrieval.ts",
     "test:api": "tsx scripts/test-api.ts",
     "test:ai": "tsx scripts/test-ai.ts",
     "test:vector": "tsx scripts/test-vector-retrieval.ts",
-    "build:embeddings": "tsx scripts/build-embeddings.ts"
+    "test:multilingual": "tsx scripts/test-multilingual.ts",
+    "build:embeddings": "tsx scripts/build-embeddings.ts",
+    "merge:expanded": "tsx scripts/merge-expanded-rulings.ts"
   },
   "dependencies": {
     "framer-motion": "^12.40.0",

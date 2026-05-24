@@ -1,4 +1,4 @@
-import { NOT_FOUND_MESSAGE, type MarjaId } from "@/lib/types";
+import { getLocalizedNotFound, NOT_FOUND_MESSAGE, type MarjaId } from "@/lib/types";
 import type { RetrievedRuling } from "@/lib/retriever";
 import { buildSourcePacket, YAQEEN_SYSTEM_PROMPT } from "./prompt";
 import { getAIProvider } from "./provider";
@@ -6,6 +6,9 @@ import type { AIProviderName, FallbackReason, GeneratedAnswer } from "./types";
 
 type GenerateAnswerInput = {
   question: string;
+  retrievalQuery?: string;
+  answerLanguage?: string;
+  detectedLanguage?: string;
   marjaId: MarjaId;
   marjaName: string;
   retrievedRecords: RetrievedRuling[];
@@ -15,12 +18,18 @@ const NOT_FOUND_EXACT = "Not Found in the current verified dataset.";
 
 export async function generateAnswer({
   question,
+  retrievalQuery,
+  answerLanguage,
+  detectedLanguage,
   marjaName,
   retrievedRecords,
 }: GenerateAnswerInput): Promise<GeneratedAnswer> {
+  const lang = detectedLanguage ?? "en";
+  const notFoundMsg = getLocalizedNotFound(lang);
+
   if (retrievedRecords.length === 0) {
     return {
-      answer: NOT_FOUND_MESSAGE,
+      answer: notFoundMsg,
       answer_mode: "not_found",
       ai_provider: "none",
       ai_model: null,
@@ -41,7 +50,13 @@ export async function generateAnswer({
         { role: "system", content: YAQEEN_SYSTEM_PROMPT },
         {
           role: "user",
-          content: buildSourcePacket({ question, marjaName, records }),
+          content: buildSourcePacket({
+            question,
+            retrievalQuery: retrievalQuery ?? question,
+            answerLanguage: answerLanguage ?? "English",
+            marjaName,
+            records,
+          }),
         },
       ],
       temperature: 0,
@@ -61,7 +76,7 @@ export async function generateAnswer({
 
     if (validatedText === NOT_FOUND_EXACT) {
       return {
-        answer: NOT_FOUND_EXACT,
+        answer: notFoundMsg,
         answer_mode: "not_found",
         ai_provider: result.provider,
         ai_model: result.model,

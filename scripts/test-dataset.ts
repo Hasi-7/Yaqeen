@@ -4,7 +4,7 @@ import { validateRulingRecord, validateRulingRecords } from "../src/lib/ruling-s
 import { APPROVED_VERIFICATION_STATUSES, type RulingRecord } from "../src/lib/types";
 
 const records = validateRulingRecords(rulings);
-assert.equal(records.length, 12);
+assert.equal(records.length, 23);
 assert.ok(records.every((record) => record.verification_status === "verified_demo"));
 
 const invalidRecord = {

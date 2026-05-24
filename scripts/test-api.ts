@@ -19,7 +19,8 @@ async function main() {
 }
 
 async function testSingleFound() {
-  const payload = await ask({ question: "What breaks wudhu?", marja_id: "sistani" });
+  // Use a question not intercepted by pinned answers so retrieval populates sources
+  const payload = await ask({ question: "Can I fast while traveling?", marja_id: "sistani" });
   assert.equal(payload.mode, "single");
   assert.equal(payload.status, "found");
   assert.ok(payload.sources.length > 0);
